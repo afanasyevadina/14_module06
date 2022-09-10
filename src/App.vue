@@ -110,7 +110,7 @@ export default {
     },
     initializeCards: function () {
       let cards = []
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= 10; i++) {
         cards.push(`memo-${i < 10 ? '0' : ''}${i}`)
       }
       this.shuffledCards = [...cards].concat([...cards]).sort(() => Math.random() - 0.5).map((item, index) => ({id: index + 1, src: item, open: false}))
@@ -146,6 +146,7 @@ export default {
     restartGame: function () {
       this.state = 'init'
       window.$("#wellcomeMessage").modal('show');
+      this.userName = ''
     },
     sortResults: function () {
       let resultsGroups = {}
