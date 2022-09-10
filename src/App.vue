@@ -87,27 +87,51 @@ export default {
   name: 'App',
   data() {
     return {
+      /**
+       * init, game or finish
+       */
       state: 'init',
       shuffledCards: [],
-      foundCards: [],
+      /**
+       * selection state
+       */
       activeCards: {first: null, second: null},
+      /**
+       * list from local storage
+       */
       results: [],
+      /**
+       * count of attempts
+       */
       counter: 0,
+      /**
+       * in form on complete
+       */
       userName: null
     }
   },
   computed: {
+    /**
+     * when 0, game completed
+     * @returns {*[]}
+     */
     notFoundCards: function () {
       return this.shuffledCards.filter(v => !v.found)
     }
   },
   methods: {
+    /**
+     * open game area
+     */
     startGame: function () {
       this.state = 'game'
       this.counter = 0
       this.initializeCards()
       window.$("#wellcomeMessage").modal('hide');
     },
+    /**
+     * shuffle cards
+     */
     initializeCards: function () {
       let cards = []
       for (let i = 1; i <= 10; i++) {
@@ -115,6 +139,10 @@ export default {
       }
       this.shuffledCards = [...cards].concat([...cards]).sort(() => Math.random() - 0.5).map((item, index) => ({id: index + 1, src: item, open: false}))
     },
+    /**
+     * on card click
+     * @param card
+     */
     toggleCard: function (card) {
       if (!card.open) {
         if (!this.activeCards.first) this.activeCards.first = card
@@ -134,20 +162,33 @@ export default {
         }
       }
     },
+    /**
+     * all cards found
+     */
     finishGame: function () {
       window.$("#finishMessage").modal('show');
     },
+    /**
+     * saving result to local storage
+     */
     saveResult: function () {
       this.state = 'finish'
       window.$("#finishMessage").modal('hide');
       this.results.push({name: this.userName, score: this.counter})
       localStorage.setItem('_g_results', JSON.stringify(this.results))
     },
+    /**
+     * Restart on click
+     */
     restartGame: function () {
       this.state = 'init'
       window.$("#wellcomeMessage").modal('show');
       this.userName = ''
     },
+    /**
+     * Normalize results for view
+     * @returns {*[]}
+     */
     sortResults: function () {
       let resultsGroups = {}
       this.results.sort((a, b) => a.score < b.score ? 1 : (a.score > b.score ? -1 : 0)).forEach(result => {
@@ -163,6 +204,9 @@ export default {
       return results.slice(0, 10)
     }
   },
+  /**
+   * start from here
+   */
   mounted() {
     window.$("#wellcomeMessage").modal('show');
     this.results = localStorage.getItem('_g_results') ? JSON.parse(localStorage.getItem('_g_results')) : []
